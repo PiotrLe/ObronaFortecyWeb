@@ -1,6 +1,8 @@
+ 
 <?php
 /*blabla*/
 /*poboczny branch*/
+/* cokolwiek */
 session_start();
 $db=mysqli_connect("localhost","root","","authentication");
 ?>
