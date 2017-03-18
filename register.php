@@ -16,6 +16,11 @@ if(isset($_POST['register_btn']))
 $email1=mysqli_real_escape_string($conn,$_POST['email']);
 $password=mysqli_real_escape_string($conn,$_POST['password']);
 $password2=mysqli_real_escape_string($conn,$_POST['password2']);
+if(strlen($username)<5)
+{ 
+	$_SESSION['message']="Username must have minimum 5 chars";
+}
+else{
 if($password==$password2)
 {$password= md5($password);
 mysqli_query($conn,"INSERT INTO users(username,email,password) VALUES('$username','$email1','$password')");
@@ -26,6 +31,7 @@ header("location:login.php");
 else{$_SESSION['message']="The two password do not match";
 }
 }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,19 +39,18 @@ else{$_SESSION['message']="The two password do not match";
   <title>Registration</title>
   <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
-<body>
+<body link="white" vlink="white" alink="white">
 <div class="header">
     <h1>Registration</h1>
 </div>
 <?php
-/*
-    if(isset($_SESSION['message']))
-    {
-         echo "<div id='error_msg'>".$_SESSION['message']."</div>";
-         unset($_SESSION['message']);
-    }
-*/
+if(isset($_SESSION['message']))
+{
+echo "<div id='error_msg'>".$_SESSION['message']."</div>";
+unset($_SESSION['message']);
+}
 ?>
+
 <form method="post" action="register.php">
   <table>
 <div>
