@@ -16,17 +16,24 @@ if(isset($_POST['register_btn']))
 $email1=mysqli_real_escape_string($conn,$_POST['email']);
 $password=mysqli_real_escape_string($conn,$_POST['password']);
 $password2=mysqli_real_escape_string($conn,$_POST['password2']);
-if(strlen($username)<5)
+$result=mysqli_query($conn,"SELECT * FROM users WHERE username='$username'");
+if(mysqli_num_rows($result)==1)
 { 
-	$_SESSION['message']="Username must have minimum 5 chars";
+	$_SESSION['message']="This username already exists";
 }
 else{
 if($password==$password2)
-{$password= md5($password);
+{ if(strlen($password)<5)
+	{
+		$_SESSION['message']="Password is too short, it must have minimum 5 chars.";
+	}
+	else{
+$password= md5($password);
 mysqli_query($conn,"INSERT INTO users(username,email,password) VALUES('$username','$email1','$password')");
 $_SESSION['message']="You are now logged in"; 
 $_SESSION['username']=$username;
 header("location:login.php");
+}
 }
 else{$_SESSION['message']="The two password do not match";
 }
