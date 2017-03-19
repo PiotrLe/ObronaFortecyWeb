@@ -39,6 +39,10 @@ else{$_SESSION['message']="The two password do not match";
 }
 }
 }
+if(isset($_POST['login_btn']))
+{
+	header("location:login.php");
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -79,10 +83,11 @@ unset($_SESSION['message']);
      </tr>
       <tr>
            <td></td>
-           <td><input type="submit" name="register_btn" class="Register" value="Zarejestruj"></td>
+           <td><input type="submit" name="register_btn" class="register" value="Sing in"></td>
      </tr>
      <tr> <td></td>
-           <td><div id="menu"><li><a href="login.php" >Zaloguj</a></li></div></td>
+            <td><input type="submit" name="login_btn" class="register" value="Log in"></td>
+          
      </tr>
 </div>
 <!--<div id="menu">
