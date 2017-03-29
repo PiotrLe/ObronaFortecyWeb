@@ -1,6 +1,9 @@
 <?php
 session_start();
+//mysql_connect('localhost','root','')or die('nie mozna polaczyc: '.mysql_error()); 
 $db=mysqli_connect("localhost","root","","authentication");
+//mysql_select_db('authentication');
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +28,19 @@ unset($_SESSION['message']);
 echo $_SESSION['username'];
 ?></h4>
 Here we are in home:)
+
+
+Youre items:
+<?php
+$result=mysqli_query($db,"SELECT nazwa from items inner join users_items on items.id_it=users_items.id_it inner join users on users.id_uz=users_items.id_uz where users.id_uz=5");
+while($row=mysqli_fetch_array($result,MYSQLI_NUM)){
+	printf('Twoje przedmioty to: %s',$row[0]);
+	//printf ("Cos: %s  Cos: %s", $row[0], $row[1]);  
+}
+
+//$item=mysqli_real_escape_string($db,"SELECT nazwa from user-items join users using id_uz join items using id_it  where username='$username' ");
+//echo $item;
+?>
 </div>
 </div>
 <div id="menu">
