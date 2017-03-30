@@ -32,19 +32,37 @@ Here we are in home:)
 
 Youre items:
 <?php
-$result=mysqli_query($db,"SELECT nazwa from items inner join users_items on items.id_it=users_items.id_it inner join users on users.id_uz=users_items.id_uz where users.id_uz=5");
-while($row=mysqli_fetch_array($result,MYSQLI_NUM)){
-	printf('Twoje przedmioty to: %s',$row[0]);
+$username=$_SESSION['username'];
+$items=mysqli_query($db,"SELECT nazwa from items inner join users_items on items.id_it=users_items.id_it inner join users on users.id_uz=users_items.id_uz where users.username='$username'");
+
+$money =mysqli_query($db,"SELECT money from users where username='$username'");
+while($moneyreal=mysqli_fetch_array($money,MYSQLI_NUM)){$money1= $moneyreal[0];};
+echo 'Money: ';
+echo ' ';
+echo $money1;
+echo ' ';
+while($row=mysqli_fetch_array($items,MYSQLI_NUM)){
+	echo $row[0] ;
+	echo ' ';
+
+
 	//printf ("Cos: %s  Cos: %s", $row[0], $row[1]);  
+//echo '<img src='.$row[0].'.png"/>';
+//echo '<img src='.MieczPotegi.png.'">';
+$pom=$row[0].".png";
+echo "<img src='$pom ' width =100% height=100%>";
+
 }
+
 
 //$item=mysqli_real_escape_string($db,"SELECT nazwa from user-items join users using id_uz join items using id_it  where username='$username' ");
 //echo $item;
 ?>
+
 </div>
 </div>
 <div id="menu">
-<li><a href="home.php">Home</a></li>
+<li><a href="home.php" img src="przycisk.png">Home</a></li>
 </div>
 <div id="menu">
 <li><a href="aktualnosci.php">News</a></li>
