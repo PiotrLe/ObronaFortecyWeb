@@ -12,6 +12,7 @@ top:0px;
 width:100%;
 padding:5px;
 font-size:16px;
+height:80px;
 }
 
 form
@@ -20,12 +21,12 @@ width:40%;
 padding:3px;
 border:1px solid #cbcbcb;
 margin:5px auto;
+
 }
 .textInput
 {
 margin-top:2px;
-
-  height:28px;
+height:28px;
 border:1px solid #5E6E66;
 font-size:16px;
 padding:1px;
@@ -48,16 +49,19 @@ text-align:center;
 padding-top:10px;
 }
 #menu {
+
 background:#356337;
 margin: 2px;
 padding: 0;
 border: 10px solid #356337; 
-width: 7% ;
+width: 150px ;
+height:50px;
 
 }
 a:hover { color: #c2d0c3; }
 a{text-decoration: none}
 #menu ul, #menu li{
+	font-color:white;
 list-style-type: none;
 margin: 0px auto;
 padding: 0; 
@@ -69,7 +73,7 @@ font-size:20px;
 .tekst
 {
 position: absolute;
-left: 150px;
+left: 210px;
 top:135px;
 margin:0px auto;
 background-color:white;
@@ -85,4 +89,33 @@ text-align: left;
 {
 	width:100px;
 	text-align:center;
+}
+
+
+body {
+    padding: 10px;
+}
+
+.plansza {
+    margin:30px auto;
+    position: relative;
+    background: #fff;
+    overflow: hidden;
+    width: 550px;
+    height: 444px;
+    border: 2px solid #ddd;
+}
+
+.kafelek {
+    position: absolute;
+    cursor: pointer;
+    float: left;
+    width: 100px;
+    height: 100px;
+    background: #f6da17 url(images/title.png) center center no-repeat;
+    margin: 10px;
+}
+
+.kafelek:hover {
+    background-color:#F7C11A;
 }
