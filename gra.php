@@ -28,12 +28,75 @@ echo $_SESSION['username'];
 ?></h4>
 Game will be able to meet you soon. <br>
 <div class="plansza">
+<canvas width="400" height="400" id="can"> </canvas>
 
 </div>
 <div class="moves"></div>
-<script>
+<script> 
+    function startGame() {  
+    	function ChangeListener(){
+    window.addEventListener('keydown', function(event) {
+  czlowiek.print();
+}, false);
+}
+    	function KeyListener(){ 
+    	
+    window.addEventListener('keydown', function(event) {
+
+czlowiek.changePosition(event.keyCode);
+}, false);
+}
+//----------------------------------------------------------------//
+function Gracz(_x,_y) {
+    this.x = _x;
+    this.y = _y;
+    this.vx = 5;
+    this.vy =5;
+    this.changePosition= function(number) { switch(number){
+	    case 37: 
+	    this.x-=this.vx;
+	     break;
+	     case 38:
+	     this.y-=this.vy;
+	     break;
+	     case 39:
+	     this.x+=this.vx;
+	     break;
+	     case 40:
+	     this.y+=this.vy;
+	     break; }  }
+    this.print = function() {
+
+    	var canvas = document.getElementById('can');
+if (canvas.getContext){
+    var c = canvas.getContext('2d');
+
+    //rysujemy niebieski kwadrat
+    c.fillRect(this.x,this.y,5,5);
+
+};
+
+
+        console.log(this.x+ 'x' + this.y)
+    }
+}
+//----------------------------------------------------------------//
+//inicjalizacja// 
+ 
+var czlowiek = new Gracz(0,0);
+KeyListener();
+ChangeListener();
+//----------------------------------------------------------------//
+  czlowiek.print();
+}
+
+
+
+ 
+console.log('gefe');
+
 (function() {    
-    var LICZBA_KAFELKOW = 20;
+    /*var LICZBA_KAFELKOW = 20;
     var KAFELKI_NA_RZAD = 5;
     var kafelki = [];
     var pobraneKafelki = [];
@@ -51,16 +114,10 @@ Game will be able to meet you soon. <br>
         'title_8.png',
         'title_9.png',
         'title_10.png'
-    ];
+    ]; */
 
-    function startGame() {
-        kafelki = [];
-        pobraneKafelki = [];
-        moznaBrac = true;
-        liczbaRuchow = 0;
-        paryKafelkow = 0;
 
-        var plansza = $('.plansza').empty();
+   /*     var plansza = $('.plansza').empty();
 
         for (var i=0; i<LICZBA_KAFELKOW; i++) {
             kafelki.push(Math.floor(i/2));
@@ -137,7 +194,7 @@ Game will be able to meet you soon. <br>
         pobraneKafelki = new Array();
         moznaBrac = true;
     }
-
+*/
     $(document).ready(function() {
 
         $('.start_game').click(function() {
@@ -146,6 +203,7 @@ Game will be able to meet you soon. <br>
 
     })
 })();
+//startGame();
 </script>
 <button class="start_game">Rozpocznij Grę</button>
 
