@@ -28,95 +28,239 @@ echo $_SESSION['username'];
 ?></h4>
 Game will be able to meet you soon. <br>
 <div class="plansza">
-<canvas width="400" height="400" id="can"> </canvas>
+<canvas width="555" height="444" id="can"> 
+
+</canvas>
 
 </div>
+
 <div class="moves"></div>
 <script> 
-    function startGame() {  
-    	function ChangeListener(){
-    window.addEventListener('keydown', function(event) {
-  czlowiek.print();
-}, false);
-}
-    	function KeyListener(){ 
-    	
-    window.addEventListener('keydown', function(event) {
+    //funkcja gry
+function startGame() { 
+function Round(n, k)
+{
+    var factor = Math.pow(10, k);
+    return Math.round(n*factor)/factor;
+} 
+//<img id="gracz" src="gracz.png" alt="The Scream" width="10" height="10">
+var licznik=0;
+    	var xmouse=0;
+        var ymouse=0;
+    function KeyListener(){ 
+    	canvas= document.getElementById('can');
+    canvas.addEventListener('click', function(event) {
+var rect = canvas.getBoundingClientRect();
+ xmouse = event.clientX-rect.left;
+ ymouse = event.clientY-rect.top;
+ 
+ ymouse=Round(ymouse,0);
+ console.log('xmouse '+ xmouse, +'ymouse '+ ymouse);
+//czlowiek.changePosition(event.clientX-rect.left,event.clientY-rect.top);
 
-czlowiek.changePosition(event.keyCode);
-}, false);
+}, false) ; }
+function WB(a)
+{
+  
+  if(a>0)
+  return a;
+  else return -a;
 }
-//----------------------------------------------------------------//
+function Baza(){
+  
+  this.img =  images["baza1"];
+   this.print = function() {
+   
+      var canvas = document.getElementById('can');
+        if (canvas.getContext){
+          var c = canvas.getContext('2d');
+       ctx.drawImage(this.img,width/2-15,height/2-15);
+                          }
+                        }
+                              }
 function Gracz(_x,_y) {
     this.x = _x;
     this.y = _y;
-    this.vx = 5;
-    this.vy =5;
-    this.changePosition= function(number) { switch(number){
-	    case 37: 
-	    this.x-=this.vx;
-	     break;
-	     case 38:
-	     this.y-=this.vy;
-	     break;
-	     case 39:
-	     this.x+=this.vx;
-	     break;
-	     case 40:
-	     this.y+=this.vy;
-	     break; }  }
+    this.v = 5*60/100;
+    var c = document.getElementById("can");
+    var ctx = c.getContext("2d");
+   // var img = document.getElementById("gracz");
+
+   this.img= images["gracz"];
+this.img1=images["gracz1"];
+
+    //zmiana pozycji
+    this.changePosition= function(xnew,ynew) { 
+      var drogax = 0.0; 
+      var drogay =0.0;
+      var temdrx ;
+      var temdry ;
+drogax = xnew - this.x;
+drogay = ynew -this.y;
+var stos=Math.sqrt(Math.pow(drogax,2)+Math.pow(drogay,2))/this.v;
+var predkoscx;
+var predkoscy;
+if(stos==0)
+stos=1;
+predkoscx=drogax/stos;
+predkoscy=drogay/stos;
+if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
+{ 
+     
+   if(WB(this.x - xmouse)< 2 && WB(this.y-ymouse) <2)
+   {
+  this.x=xmouse;
+  this.y=ymouse;
+ }
+ else
+ {this.x+=predkoscx;
+   this.y+=predkoscy;
+   licznik++;}
+}
+/*
+if(drogax>0.1)
+ {
+   this.x+=predkoscx;
+   this.y+=predkoscy;
+}
+ else
+ {
+   
+   this.x+=predkoscx;
+   this.y+=predkoscy;
+ }*/
+
+
+ console.log('this.x:' + this.x + ' this.y: '+ this.y);
+
+//obliczam funkcje liniowa po ktorej ma sie poruszac gostek
+/*var a=drogay/drogax;
+console.log('a'+a);
+if(drogax>2)
+{ console.log('przesuwam ');
+if(this.x==0)
+this.x=1;
+this.x+=this.vx/Math.sqrt(Math.pow(drogax,2)+Math.pow(drogay,2));
+console.log('this.x='+this.x);
+this.y=a*this.x;
+}
+
+*/
+
+
+/* drogax = xnew - this.x;
+     drogay = ynew -this.y;
+        drogay=drogay%600;
+ drogax= drogax%600;
+if(drogax<0)
+temdrx=-drogax;
+if(drogay<0)
+temdry=-drogay;
+if(drogax>0)
+temdrx=drogax;
+if(drogay>0)
+temdry=drogay;
+
+if(temdrx>temdry)
+this.vy=this.vy/(temdrx/temdry);
+if(temdry>temdrx)
+this.vx=this.vx/(temdry/temdrx);
+*/
+//------- stare
+/*if(drogax>drogay)
+this.vy=this.vy/(drogax/drogay);
+if(drogay>drogax)
+this.vx=this.vx/(drogay/drogax);
+*/
+/*
+      if(drogax> 2)
+      {licznik++;
+        this.x+=this.vx;
+      }
+      if(drogax < -2)
+      { licznik++;
+       this.x-=this.vx;
+}
+     if(drogay> 2)
+     this.y+=this.vy;
+     if(drogay<-2)
+     this.y-=this.vy;
+
+this.vx=5*60/100;
+this.vy=5*60/100;
+                                        */     }
+    //rysowanie
     this.print = function() {
-
-    	var canvas = document.getElementById('can');
-if (canvas.getContext){
-    var c = canvas.getContext('2d');
-
-    //rysujemy niebieski kwadrat
-    c.fillRect(this.x,this.y,5,5);
-
-};
+   
+      var canvas = document.getElementById('can');
+        if (canvas.getContext){
+          var c = canvas.getContext('2d');
+             //rysujemy niebieski kwadrat
+       
+           if(licznik%40<20)
+            // c.fillRect(this.x,this.y,5,5);
+       ctx.drawImage(this.img,this.x,this.y);
+       else
+       ctx.drawImage(this.img1,this.x,this.y);
+                              }
 
 
         console.log(this.x+ 'x' + this.y)
-    }
+        //wypisywanie w konsoli
+                             }
 }
+var pathToImages = "images/";
+var images = ["tlo","baza1", "gracz", "gracz1"
+              ];
+// ladowanie obrazkow
+(function loadImages(){
+  for(var i = 0; i <images.length; i++){
+    images[images[i]] = new Image();
+    images[images[i]].src = pathToImages + images[i] + ".png";
+  }
+})();
 //----------------------------------------------------------------//
 //inicjalizacja// 
- 
+//ladowanie obrazkow
+
+//----------------------------------------------------------------//
+var baza = new Baza();
+var c = document.getElementById("can");
+var ctx = c.getContext("2d");
+ctx.fillStyle = "#FF0000";
+var width = c.width;
+var height = c.height; 
+var step = 1000/60;
 var czlowiek = new Gracz(0,0);
 KeyListener();
-ChangeListener();
+var tlo=images["tlo"];
+ctx.drawImage(tlo,0,0);
 //----------------------------------------------------------------//
-  czlowiek.print();
+//realna petla gry
+
+function draw(timestamp) {
+   // var predkosc=5;
+
+    ctx.clearRect(0, 0, c.width, c.height); 
+ ctx.drawImage(tlo,0,0);
+   czlowiek.changePosition(xmouse,ymouse);
+   czlowiek.print();
+   //ctx.rotate(Math.PI /180);
+    // ctx.translate(width/2-40, height/2-40);
+   // ctx.rotate(Math.PI / 180); 
+   // ctx.translate(-width/2+40, -height/2+40);   
+    //ctx.fillRect(width/2+10, height/2+10, 20, 20); 
+   
+    baza.print();
+ setTimeout(draw,step);
+    //window.requestAnimationFrame(draw); // rekurencyjne wywołanie funkcji rysującej
+}
+// window.requestAnimationFrame(draw);
+draw();
 }
 
-
-
- 
-console.log('gefe');
-
 (function() {    
-    /*var LICZBA_KAFELKOW = 20;
-    var KAFELKI_NA_RZAD = 5;
-    var kafelki = [];
-    var pobraneKafelki = [];
-    var moznaBrac = true;
-    var liczbaRuchow = 0;
-    var paryKafelkow = 0;
-    var obrazkiKafelkow = [
-        'title_1.png',
-        'title_2.png',
-        'title_3.png',
-        'title_4.png',
-        'title_5.png',
-        'title_6.png',
-        'title_7.png',
-        'title_8.png',
-        'title_9.png',
-        'title_10.png'
-    ]; */
-
-
+    
    /*     var plansza = $('.plansza').empty();
 
         for (var i=0; i<LICZBA_KAFELKOW; i++) {
@@ -144,7 +288,7 @@ console.log('gefe');
             tile.bind('click',function() {klikniecieKafelka($(this))});
         }
         $('.moves').html(liczbaRuchow);
-    }
+
 
     function klikniecieKafelka(element) {
         if (moznaBrac) {
@@ -172,29 +316,8 @@ console.log('gefe');
         }
     }
 
-    function usunKafelki() {
-        pobraneKafelki[0].fadeOut(function() {
-            $(this).remove();
-        });
-        pobraneKafelki[1].fadeOut(function() {
-            $(this).remove();
-
-            paryKafelkow++;
-            if (paryKafelkow >= LICZBA_KAFELKOW / 2) {
-                alert('gameOver!');
-            }
-            moznaBrac = true;
-            pobraneKafelki = new Array();
-        });
-    }
-
-    function zresetujKafelki() {
-        pobraneKafelki[0].css({'background-image':'url(title.png)'})
-        pobraneKafelki[1].css({'background-image':'url(title.png)'})
-        pobraneKafelki = new Array();
-        moznaBrac = true;
-    }
-*/
+  
+*/ // przycisk startu
     $(document).ready(function() {
 
         $('.start_game').click(function() {
@@ -203,7 +326,7 @@ console.log('gefe');
 
     })
 })();
-//startGame();
+
 </script>
 <button class="start_game">Rozpocznij Grę</button>
 
