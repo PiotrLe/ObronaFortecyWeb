@@ -41,6 +41,7 @@ function Rand(min,max)
 return  parseInt((Math.random() * (max - min + 1)), 10) + min;
 
 }
+///
 function AtakPrzeciwnika(przeciwnik,baza){
   if(Kolizja(przeciwnik,baza))
   { 
