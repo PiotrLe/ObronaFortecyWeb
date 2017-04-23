@@ -1,6 +1,32 @@
 <?php
 session_start();
 $db=mysqli_connect("localhost","root","","authentication");
+
+$username=$_SESSION['username'];
+if($username==NULL)
+{
+  header("location:register.php");
+}
+$items=mysqli_query($db,"SELECT nazwa from items inner join users_items on items.id_it=users_items.id_it inner join users on users.id_uz=users_items.id_uz where users.username='$username'");
+ $ButyPredkosci="nic";
+  $MieczPotegi="nic";
+
+
+
+while($row=mysqli_fetch_array($items,MYSQLI_NUM)){
+ 
+  if($row[0]=="ButyPredkosci")
+  $ButyPredkosci = $row[0];
+  if($row[0]== "MieczPotegi")
+  $MieczPotegi= $row[0];
+  //   if($row[1]=="ButyPredkosci")
+  // $ButyPredkosci = $row[1];
+  // if($row[1]== "MieczPotegi")
+  // $MieczPotegi= $row[1];
+} 
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -36,12 +62,38 @@ Game will be able to meet you soon. <br>
 
 <div class="moves"></div>
 <script> 
+
+
+
+
+function Spawn()
+{    var los=Rand(1,4);
+  var x;
+  var y;
+  switch(los){
+  case 1:
+x=0;
+y=Rand(0,450);
+break;
+   case 2:
+   x=560;
+   y=Rand(0,450);
+   break;
+   case 3:
+   y=0;
+   x=Rand(0,560);
+   break;
+   case 4:
+   y=450;
+   x=Rand(0,560);
+}
+  return {x,y};
+}
 function Rand(min,max)
 {
 return  parseInt((Math.random() * (max - min + 1)), 10) + min;
 
 }
-///
 function AtakPrzeciwnika(przeciwnik,baza){
   if(Kolizja(przeciwnik,baza))
   { 
@@ -64,7 +116,7 @@ function Kolizja(obj1,obj2){
    obj1.y < obj2.y + obj2.img.height &&
    obj1.img.height + obj1.y > obj2.y)
    {
-   //  console.log("KOLIZJA");
+
 
      return true;
    }
@@ -78,8 +130,8 @@ function KolizjaMiecza(przeciwnik,miecz)
 if(Kolizja(miecz,przeciwnik))
 { if(miecz.mieczI>0)
   {
-  przeciwnik.hp--;
-  console.log(przeciwnik.hp);
+  przeciwnik.hp=przeciwnik.hp-miecz.obrazenia;
+
 }
 }
 }
@@ -100,9 +152,9 @@ function KeyListenerK(Gracz){
 switch(event.keyCode){
 case 81: 
 Gracz.miecz.mieczI=10;
-console.log("Hahaha kliknales q");
+
   break;
-  default: console.log(event.keyCode);
+
 }
 }, false) ;  
 }
@@ -132,7 +184,7 @@ var rect = canvas.getBoundingClientRect();
  
  ymouse=Round(ymouse,0);
  xmouse=Round(xmouse,0);
- console.log('xmouse '+ xmouse +'ymouse '+ ymouse);
+
 
 
 }, false) ; }
@@ -148,23 +200,28 @@ function WB(a)
 
 //-------------------Baza------------------//
 function Baza(){
- this.hp=200;
-     this.x=width/2-15;
-     this.y=height/2-15;
-  this.img =  images["baza1"];
+  this.maxHp=400;
+ this.hp=400;
+  this.img =  images["baza"];
+     this.x=width/2-this.img.width/2;
+     this.y=height/2-this.img.height/2;
+ 
    this.print = function() {
    
       var canvas = document.getElementById('can');
         if (canvas.getContext){
          
           var c = canvas.getContext('2d');
-             this.x=width/2-15;
-     this.y=height/2-15;
+             this.x=width/2-(this.img.width/2);
+     this.y=height/2-(this.img.height/2);
        ctx.drawImage(this.img,this.x,this.y);
+        ctx.fillStyle=="#FF0000";
+           ctx.fillRect(this.x,this.y-5,this.img.width/this.maxHp*this.hp,4);
                           }
                         }
                               }
     function stworzMiecz(gracz)  {
+      this.obrazenia=1;
         this.x=gracz.x-5;
        this.y=gracz.y-5;
        this.mieczI=0;
@@ -174,8 +231,8 @@ function Baza(){
 //------------------------Gracz-----------------------//               
 function Gracz() {
  
-
-
+this.MieczPotegi='<?= $MieczPotegi ?>';
+this.ButyPredkosci='<?= $ButyPredkosci ?>';
 
     this.prevY=0;
     this.prevX=0;
@@ -183,6 +240,14 @@ function Gracz() {
     this.y = 0;
     this.miecz = stworzMiecz(this);
     this.v = 5*60/100;
+    if(this.MieczPotegi!="nic")
+    { 
+      this.miecz.obrazenia=5;
+    }
+    if(this.ButyPredkosci!="nic")
+    {  console.log("wszedlem");
+      this.v+=2*60/100;
+    }
     var c = document.getElementById("can");
     var ctx = c.getContext("2d");
 
@@ -214,11 +279,13 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
   this.x=xmouse;
   this.y=ymouse;
  }
- else
- { this.miecz.x+=predkoscx;
-  this.miecz.y+=predkoscy;
+ else{
+ //  this.miecz.x+=predkoscx;
+ //  this.miecz.y+=predkoscy;
    this.x+=predkoscx;
    this.y+=predkoscy;
+   this.miecz.x=this.x-5;
+   this.miecz.y=this.y-5;
    ruch++;}
 }
 }
@@ -243,6 +310,7 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
 //-------------------Przeciwnik--------------//
 function Przeciwnik(x,y) {
   this.atak=1;
+  this.maxHp=100;
     this.hp=100;
     this.prevY=0;
     this.prevX=0;
@@ -294,7 +362,7 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
           var c = canvas.getContext('2d');
            ctx.drawImage(this.img,this.x,this.y);
            ctx.fillStyle=="#FF0000";
-           ctx.fillRect(this.x,this.y-5,this.hp/3.33,4);
+           ctx.fillRect(this.x,this.y-5,this.img.width/this.maxHp*this.hp,4);
     }      
                               }
                              }
@@ -302,7 +370,7 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
 
 //--------------------Inicjalizacja obrazkow-------------------//
 var pathToImages = "images/";
-var images = ["tlo","baza1", "gracz", "gracz1", "przeciwnik", "atak","end"
+var images = ["tlo","baza", "gracz", "gracz1", "przeciwnik", "atak","end"
               ];
 //------------------Funkcja ladujaca obrazki--------------------//
 (function loadImages(){
@@ -329,21 +397,27 @@ KeyListener();
 var tlo=images["tlo"];
 var end=images["end"];
 var Tablica=[];
-
+var czestotliwosc=300;
 var PrzeciwnikI=0;
 var startTime = Date.now();
 var endTime;
 var GameTime;
+c.onmousedown = function(event){
+    event.preventDefault();
+};
 
 //---------------------------Realna petla gry------------------------------//
 
 (function draw(timestamp) {
    // var predkosc=5;
 PrzeciwnikI++;
-if(PrzeciwnikI>400)
-{
-  Tablica.push(new Przeciwnik(Rand(0,555),0));
+if(PrzeciwnikI>czestotliwosc)
+{  var pos=Spawn();
+  Tablica.push(new Przeciwnik(pos.x,pos.y));
   PrzeciwnikI=0;
+  if(czestotliwosc>50)
+  czestotliwosc-=10;
+
 }
     ctx.clearRect(0, 0, c.width, c.height); 
  ctx.drawImage(tlo,0,0);
@@ -362,14 +436,14 @@ for(var i=0;i<Tablica.length;i++)
 {  
 Tablica[i].print();
 
-    Tablica[i].changePosition(baza.x,baza.y);
+    Tablica[i].changePosition(baza.x+ baza.img.width/2,baza.y + baza.img.height/2 );
     AtakPrzeciwnika(Tablica[i],baza);
        KolizjaMiecza(Tablica[i],czlowiek.miecz);
   NieZnamySie(Tablica[i],czlowiek);
 NieZnamySie(Tablica[i],baza);
 if(Zniwiaz(Tablica[i]))
 Tablica.splice(i,1);
-console.log(baza.hp);
+
 }
 
 NieZnamySie(czlowiek,baza);
@@ -384,7 +458,18 @@ else
 {
 endTime = Date.now();
 GameTime =  (endTime - startTime)/1000;
-console.log("Czas gry: " + GameTime); 
+//--------------Ajax dla GameTime-------------//
+$.ajax({  
+    type: 'GET',
+    url: 'gra.php', 
+    data: { GameTime: 'GameTime' },
+    success: function() {
+
+console.log("SUKCESS");
+    }
+
+});
+
    ctx.drawImage(end,0,0);
 }
 })();
