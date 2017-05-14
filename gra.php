@@ -32,7 +32,34 @@ while($row=mysqli_fetch_array($items,MYSQLI_NUM)){
 <html>
 <head>
   <title>Home</title>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" >
+// function getXMLHttpRequest()
+// {
+//   var request = false;
+    
+//   try {
+//     request = new XMLHttpRequest();
+//   } catch(err1) {
+//     try {
+//       request = new ActiveXObject('Msxml2.XMLHTTP');
+//     } catch(err2) {
+//       try {
+//         request = new ActiveXObject('Microsoft.XMLHTTP');                
+//       } catch(err3) {
+//         request = false;
+//       }
+//     }
+//   }
+//   return request;
+// }    
+// var r;
+// r = getXMLHttpRequest();
+// r.open('GET', 'dane.txt', true);
+// r.onreadystatechange = processResponse;
+// r.send(null);
+
+
+</script>
 
   <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
@@ -52,7 +79,7 @@ unset($_SESSION['message']);
 <?php 
 echo $_SESSION['username'];
 ?></h4>
-Game will be able to meet you soon. <br>
+Game is ready <br>
 <div class="plansza">
 <canvas width="555" height="444" id="can" > 
 
@@ -62,8 +89,6 @@ Game will be able to meet you soon. <br>
 
 <div class="moves"></div>
 <script> 
-
-
 
 
 function Spawn()
@@ -202,7 +227,7 @@ function WB(a)
 function Baza(){
   this.maxHp=400;
  this.hp=400;
-  this.img =  images["baza"];
+  this.img =  images["baza1"];
      this.x=width/2-this.img.width/2;
      this.y=height/2-this.img.height/2;
  
@@ -221,11 +246,13 @@ function Baza(){
                         }
                               }
     function stworzMiecz(gracz)  {
+      this.mieczIimg=0;
       this.obrazenia=1;
         this.x=gracz.x-5;
        this.y=gracz.y-5;
        this.mieczI=0;
-        this.img=images["atak"];
+        this.img=images["atak3"];
+        this.img1=images["atak1"];
       return this;
     }
 //------------------------Gracz-----------------------//               
@@ -259,7 +286,8 @@ this.img1=images["gracz1"];
     this.changePosition= function(xnew,ynew) { 
       var drogax = 0.0; 
       var drogay =0.0;
-      
+      this.mieczimg=images["MieczPotegi"];
+       this.butyimg=images["ButyPredkosci"];
 drogax = xnew - this.x;
 drogay = ynew -this.y;
 var stos=Math.sqrt(Math.pow(drogax,2)+Math.pow(drogay,2))/this.v;
@@ -301,8 +329,26 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
                       ctx.drawImage(this.img1,this.x,this.y);
           if(this.miecz.mieczI>0)
           { this.miecz.mieczI--;
+            this.miecz.mieczIimg++;
+            console.log(this.miecz.mieczIimg);
+            if(mieczIimg%40>20)
+            {
+                   ctx.drawImage(this.miecz.img1,this.miecz.x,this.miecz.y);
+            }
+
+            else
+            {
             ctx.drawImage(this.miecz.img,this.miecz.x,this.miecz.y);
+            }
           }
+            if(this.MieczPotegi!="nic")
+    { 
+      ctx.drawImage(this.butyimg,480,400);
+    }
+    if(this.ButyPredkosci!="nic")
+    { 
+      ctx.drawImage(this.mieczimg,515,400);
+    }
                               }
                              }
 }
@@ -320,7 +366,7 @@ function Przeciwnik(x,y) {
     var c = document.getElementById("can");
     var ctx = c.getContext("2d");
 
-   this.img= images["przeciwnik"];
+   this.img= images["przeciwnik1"];
 
 //---------------------Przeciwnik/zmiana pozycji-------------------//
 
@@ -370,7 +416,7 @@ if((-1<drogax|| drogax<1) && (-1<drogay||drogay<1))
 
 //--------------------Inicjalizacja obrazkow-------------------//
 var pathToImages = "images/";
-var images = ["tlo","baza", "gracz", "gracz1", "przeciwnik", "atak","end"
+var images = ["tlo","baza1", "gracz", "gracz1", "przeciwnik1", "atak3","end1","MieczPotegi","ButyPredkosci","atak1"
               ];
 //------------------Funkcja ladujaca obrazki--------------------//
 (function loadImages(){
@@ -395,7 +441,7 @@ var czlowiek = new Gracz();
 KeyListener();
  KeyListenerK(czlowiek);
 var tlo=images["tlo"];
-var end=images["end"];
+var end=images["end1"];
 var Tablica=[];
 var czestotliwosc=300;
 var PrzeciwnikI=0;
@@ -458,19 +504,12 @@ else
 {
 endTime = Date.now();
 GameTime =  (endTime - startTime)/1000;
-//--------------Ajax dla GameTime-------------//
-$.ajax({  
-    type: 'GET',
-    url: 'gra.php', 
-    data: { GameTime: 'GameTime' },
-    success: function() {
-
-console.log("SUKCESS");
-    }
-
-});
 
    ctx.drawImage(end,0,0);
+   ctx.font = "50px Arial";
+   ctx.fillText("GAME OVER",tlo.width/2-150,tlo.height/2);
+      ctx.font = "20px Arial";
+   ctx.fillText("TWOJ CZAS: "+ GameTime,tlo.width/2-100,tlo.height/2+55);
 }
 })();
  //window.requestAnimationFrame(draw);
@@ -489,6 +528,7 @@ console.log("SUKCESS");
 })();
 
 </script>
+
 <button class="start_game">Rozpocznij Grę</button>
 
 </div>
